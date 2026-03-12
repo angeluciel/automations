@@ -2,8 +2,7 @@
 ####  Script para automação das rotinas de Backup  ###############
 ##################################################################
 
-
-# ──  Instala Módulos de Segurança ───────────────────────────── #
+#region ──  Instala Módulos de Segurança ─────────────────────── #
 
 if (-not (Get-Module -ListAvailable -Name Microsoft.Powershell.SecretManagement )) {
     Install-Module -Name Microsoft.Powershell.SecretManagement -AllowClobber -Force
@@ -12,9 +11,10 @@ if (-not (Get-Module -ListAvailable -Name Microsoft.Powershell.SecretStore)) {
     Install-Module -Name Microsoft.Powershell.SecretStore
 }
 
-# ──  Instala Módulos de Segurança ───────────────────────────── #
+#endregion ───────────────────────────────────────────────────── #
 
-# ──  Configuração  ──────────────────────────────────────────── #
+
+#region ──  Configuração  ────────────────────────────────────── #
 
 $pathToCredential = "C:\path\secret.xml"
 $loadedCredential = Import-CliXML -Path $pathToCredential
@@ -37,10 +37,10 @@ $SecretToken = (Invoke-RestMethod `
     } `
     -SkipCertificateCheck).access_token
 
-# ────────────────────────────────────────────────────────────── #
+#endregion ───────────────────────────────────────────────────── #
 
 
-# ──  Derivar a data do mês anterior  ────────────────────────── #
+#region ──  Derivar a data do mês anterior  ──────────────────── #
 
 $Today              = Get-Date
 $FirstOfThisMonth   = Get-Date -Year $Today.Year -Month $Today.Month -Day 1 `
@@ -54,10 +54,10 @@ $EndedBefore        = $LastOfLastMonth.ToUniversalTime().ToString("yyyy-MM-ddTHH
 
 Write-Host "Consultando sessões de: $CreatedAfter -> $EndedBefore" -ForegroundColor Cyan
 
-# ────────────────────────────────────────────────────────────── #
+#endregion ───────────────────────────────────────────────────── #
 
 
-# ──  Requisição HTTP  ───────────────────────────────────────── #
+#region ──  Requisição HTTP  ─────────────────────────────────── #
 
 $Headers = @{
     "Authorization" = "Bearer $SecretToken"
@@ -76,11 +76,9 @@ $QueryString = ($QueryParams.GetEnumerator() |
 
 $Uri = "$BaseUrl/api/v1/sessions?$QueryString"
 
-# ────────────────────────────────────────────────────────────── #
+#endregion ───────────────────────────────────────────────────── #
 
-
-# ──  Roda a Request  ────────────────────────────────────────── #
-
+#region ──  Roda a Request  ──────────────────────────────────── #
 try {
     $Response = Invoke-RestMethod `
         -Uri            $Uri `
@@ -93,3 +91,5 @@ try {
 } catch {
     Write-Error "Request failed: $_"
 }
+
+#endregion ───────────────────────────────────────────────────── #
