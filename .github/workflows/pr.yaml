@@ -1,0 +1,21 @@
+name: PRCheck-Dev
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install dependencies
+        run: echo "running npm install..."
+
+      - name: run unit tests
+        run: echo "running unit tests..."
+
+      - name: run linter
+        run: echo "linting the code..."
