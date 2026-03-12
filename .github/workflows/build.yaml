@@ -1,2 +1,0 @@
-- name: build docker image
-  run: docker build -t myapp:${{ gitub.sha }} .
